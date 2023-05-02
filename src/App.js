@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { getAllCategories } from './actions/categoriesActions';
+import { getProducts } from "./actions/productsActions";
+import SelectDropdown from './components/SelectDropdown';
+import Header from './components/Header';
 
-function App() {
+const App = ({ categories, dispatch }) => {
+  useEffect(() => {
+    dispatch(getAllCategories());
+  }, [dispatch]);
+
+  const handleCategoryChange = (event) => {
+    const category = event.target.value.trim();
+    if (category) {
+      dispatch(getProducts(category));
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header />
+      <div className="category-dropdown">
+        <SelectDropdown categories={categories}
+        handleCategoryChange={handleCategoryChange}
+        />
+      </div>
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state) => {
+  const { categories } = state;
+
+  return {
+    categories
+  };
+};
+
+export default connect(mapStateToProps)(App);
